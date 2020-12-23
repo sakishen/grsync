@@ -2,8 +2,9 @@ package grsync
 
 import (
 	"bufio"
+	"fmt"
 	"io"
-    "fmt"
+
 	//"math"
 	//"bytes"
 	"strconv"
@@ -43,6 +44,11 @@ func (t Task) Log() Log {
 		Stderr: t.log.Stderr,
 		Stdout: t.log.Stdout,
 	}
+}
+
+// GetCommand get command
+func (t Task) GetCommand() string {
+	return t.rsync.GetCommand()
 }
 
 // Run starts rsync process with options
@@ -93,11 +99,11 @@ func processStdout(task *Task, stdout io.Reader) {
 	// Extract data from strings:
 	//         999,999 99%  999.99kB/s    0:00:59 (xfr#9, to-chk=999/9999)
 	scanner := bufio.NewScanner(stdout)
-    scanner.Split(bufio.ScanWords)
+	scanner.Split(bufio.ScanWords)
 
 	for scanner.Scan() {
 		logStr := scanner.Text()
-        //fmt.Println("logStr == >", logStr)
+		//fmt.Println("logStr == >", logStr)
 		if progressMatcher.Match(logStr) {
 			//fmt.Println("progressMatcher Enter. persentage:", strings.Replace(logStr, "%", "", -1))
 			//task.state.Remain, task.state.Total = getTaskProgress(progressMatcher.Extract(logStr))
